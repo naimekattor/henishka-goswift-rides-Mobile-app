@@ -42,7 +42,7 @@ export default function OnboardingScreen() {
         animated: true,
       });
     } else {
-      router.replace("/(onboarding)/login");
+      router.replace("/(auth)/login");
     }
   };
 
@@ -56,7 +56,7 @@ export default function OnboardingScreen() {
   };
 
   const handleSkip = () => {
-    router.replace("/(onboarding)/login");
+    router.replace("/(auth)/login");
   };
 
   return (
