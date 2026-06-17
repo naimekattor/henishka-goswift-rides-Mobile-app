@@ -18,7 +18,7 @@ const ROLES: RoleOption[] = [
     title: "Customer",
     description: "Order delicious meals, book instant rides, or rent your dream car—all in one place.",
     icon: "people-outline",
-    route: "/(onboarding)/onboarding",
+    route: "/(auth)/customer-signup",
   },
   {
     id: "restaurant",
@@ -63,10 +63,10 @@ export default function SignUpScreen() {
 
   const handleRoleSelect = (role: RoleOption) => {
     setSelectedRole(role.id);
-    if (role.id === "restaurant") {
+    if (role.id === "restaurant" || role.id === "customer") {
       router.push(role.route as any);
     } else {
-      alert(`${role.title} onboarding is coming soon! Only Restaurant Partner is active in this demo.`);
+      alert(`${role.title} onboarding is coming soon! Only Customer and Restaurant Partner are active in this demo.`);
     }
   };
 

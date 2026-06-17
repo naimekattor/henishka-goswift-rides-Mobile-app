@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Button } from "@/components/button";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { Button } from "@/components/button";
+import { useState } from "react";
+import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ForgotScreen() {
   const [email, setEmail] = useState("");
@@ -13,18 +13,19 @@ export default function ForgotScreen() {
     console.log("Forgot Password requested for email:", email);
     router.push("/(auth)/otp");
   };
-
-  return (
-    <SafeAreaView className="flex-1 bg-brand-bg">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1"
-      >
+return(
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+      className="bg-brand-bg"
+    >
+      <SafeAreaView className="flex-1">
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
-          <View className="flex-1 justify-between px-6 pb-10">
+          <View className="justify-between px-6 pb-10" style={{ flexGrow: 1 }}>
             <View>
               {/* Top Bar with Back Button */}
               <View className="flex-row items-center pt-2 h-14">
@@ -67,7 +68,7 @@ export default function ForgotScreen() {
             </View>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }

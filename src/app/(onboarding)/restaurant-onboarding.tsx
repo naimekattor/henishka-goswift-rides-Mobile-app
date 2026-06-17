@@ -477,7 +477,7 @@ export default function RestaurantOnboardingScreen() {
           className="px-6 flex-1"
         >
           {/* Main content wrapper */}
-          <View className="flex-1 justify-center py-6">
+          <View className="justify-center py-6" style={{ flexGrow: 1 }}>
             {renderStepIcon()}
             {renderStepContent()}
           </View>
