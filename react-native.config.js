@@ -1,0 +1,7 @@
+module.exports = {
+  project: {
+    android: {
+      ndkVersion: "26.1.10909125",
+    },
+  },
+};

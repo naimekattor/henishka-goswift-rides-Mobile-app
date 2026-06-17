@@ -1,133 +1,338 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Image, Modal, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
+
+interface Order {
+  id: string;
+  customer: string;
+  itemsCount: number;
+  time: string;
+  status: "Preparing" | "Ready" | "Completed";
+  orderNum: string;
+}
 
 export default function RestaurantDashboard() {
   const [isOnline, setIsOnline] = useState(true);
+  const [activeMenuOrderId, setActiveMenuOrderId] = useState<string | null>(null);
 
-  // Mock KPIs
-  const kpis = [
-    { title: "Today's Sales", value: "$482.90", icon: "cash-outline", change: "+12.4%", trend: "up" },
-    { title: "Active Orders", value: "5", icon: "time-outline", change: "2 pending", trend: "neutral" },
-    { title: "Store Rating", value: "4.8 ★", icon: "star-outline", change: "124 reviews", trend: "up" },
-    { title: "Lifetime Payout", value: "$3,450", icon: "wallet-outline", change: "Completed", trend: "none" },
-  ];
+  const [orders, setOrders] = useState<Order[]>([
+    {
+      id: "1",
+      customer: "Rahim Rehman",
+      itemsCount: 2,
+      time: "12 Feb · 8:30 PM",
+      status: "Preparing",
+      orderNum: "#2043",
+    },
+    {
+      id: "2",
+      customer: "Rahim Rehman",
+      itemsCount: 2,
+      time: "12 Feb · 8:30 PM",
+      status: "Ready",
+      orderNum: "#2043",
+    },
+    {
+      id: "3",
+      customer: "Rahim Rehman",
+      itemsCount: 2,
+      time: "12 Feb · 8:30 PM",
+      status: "Completed",
+      orderNum: "#2043",
+    },
+  ]);
 
-  // Mock recent orders
-  const recentOrders = [
-    { id: "GS-4089", items: "2x Classic Cheeseburger, 1x Fries", time: "5 mins ago", status: "New", price: "$24.50" },
-    { id: "GS-4088", items: "1x Pepperoni Pizza (Large), 2x Coke", time: "12 mins ago", status: "Preparing", price: "$18.20" },
-    { id: "GS-4087", items: "3x Chicken Wings, 1x Garlic Bread", time: "28 mins ago", status: "Ready", price: "$32.90" },
-  ];
+  const updateStatus = (orderId: string, newStatus: "Preparing" | "Ready" | "Completed") => {
+    setOrders((prev) =>
+      prev.map((order) => (order.id === orderId ? { ...order, status: newStatus } : order))
+    );
+    setActiveMenuOrderId(null);
+  };
+
+  const getStatusStyle = (status: "Preparing" | "Ready" | "Completed") => {
+    switch (status) {
+      case "Preparing":
+        return {
+          bg: "bg-[#FFF8E6]",
+          text: "text-[#FFB020]",
+        };
+      case "Ready":
+        return {
+          bg: "bg-[#FFF0EB]",
+          text: "text-[#FF5C35]",
+        };
+      case "Completed":
+        return {
+          bg: "bg-[#E6F4EA]",
+          text: "text-[#137333]",
+        };
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-brand-bg">
-      {/* Top Header */}
-      <View className="bg-white border-b border-gray-100 px-6 py-4 flex-row justify-between items-center shadow-sm">
-        <View>
-          <Text className="text-brand-gray text-xs">Welcome Back</Text>
-          <Text className="text-brand-dark text-lg font-bold">Gourmet Hub</Text>
-        </View>
-
-        {/* Online / Offline switch */}
-        <TouchableOpacity
-          onPress={() => setIsOnline(!isOnline)}
-          activeOpacity={0.8}
-          className={`flex-row items-center gap-2 px-3 py-1.5 rounded-full border ${
-            isOnline ? "bg-green-50 border-green-200" : "bg-gray-100 border-gray-200"
-          }`}
-        >
-          <View className={`w-2 h-2 rounded-full ${isOnline ? "bg-green-500" : "bg-gray-400"}`} />
-          <Text className={`text-xs font-bold ${isOnline ? "text-green-700" : "text-gray-500"}`}>
-            {isOnline ? "Online" : "Offline"}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <ScrollView showsVerticalScrollIndicator={false} className="px-6 py-4 flex-1">
-        {/* KPI Grid */}
-        <View className="flex-row flex-wrap justify-between gap-3 mb-6">
-          {kpis.map((kpi, idx) => (
-            <View key={idx} style={{ width: "47%" }} className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
-              <View className="flex-row justify-between items-center mb-2">
-                <Ionicons name={kpi.icon as any} size={20} color="#E4792F" />
-                {kpi.trend === "up" && (
-                  <Text className="text-green-600 text-[10px] font-bold bg-green-50 px-1.5 py-0.5 rounded">
-                    {kpi.change}
-                  </Text>
-                )}
-                {kpi.trend === "neutral" && (
-                  <Text className="text-amber-600 text-[10px] font-bold bg-amber-50 px-1.5 py-0.5 rounded">
-                    {kpi.change}
-                  </Text>
-                )}
-                {kpi.trend === "none" && (
-                  <Text className="text-brand-gray text-[10px] font-bold bg-gray-50 px-1.5 py-0.5 rounded">
-                    {kpi.change}
-                  </Text>
-                )}
-              </View>
-              <Text className="text-brand-gray text-xs font-medium">{kpi.title}</Text>
-              <Text className="text-brand-dark text-lg font-bold mt-0.5">{kpi.value}</Text>
+      <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
+        {/* Brand Header */}
+        <View className="items-center pt-4 pb-2 bg-white">
+          <View className="flex-row items-center gap-1.5">
+            {/* Custom stylized GoSwift horn logo */}
+            <View className="flex-row items-end">
+              <View className="w-5 h-5 bg-[#E4792F] rounded-tr-[15px] rounded-bl-[15px] rotate-[15deg] mr-0.5" />
+              <View className="w-3 h-3 bg-[#E4792F]/60 rounded-tr-[10px] rounded-bl-[10px] rotate-[15deg]" />
             </View>
-          ))}
-        </View>
-
-        {/* Charts Mockup */}
-        <View className="bg-white border border-gray-100 rounded-2xl p-4 mb-6 shadow-sm">
-          <Text className="text-brand-dark text-sm font-bold mb-3">Today's Hourly Sales</Text>
-          <View className="flex-row justify-between items-end h-28 pt-2">
-            {[40, 20, 60, 80, 50, 90, 70, 85].map((val, idx) => (
-              <View key={idx} className="items-center flex-1">
-                <View
-                  style={{ height: `${val}%` }}
-                  className={`w-4 rounded-t-md ${
-                    idx === 5 ? "bg-brand-orange" : "bg-brand-orange/40"
-                  }`}
-                />
-                <Text className="text-[9px] text-brand-gray mt-1.5">{idx + 9}h</Text>
-              </View>
-            ))}
+            <Text className="text-brand-dark text-xl font-extrabold tracking-tight">
+              <Text className="text-[#2E2E2D]">Goswift</Text>{" "}
+              <Text className="text-[#E4792F]">Rides</Text>
+            </Text>
           </View>
         </View>
 
-        {/* Recent Orders List */}
-        <View className="bg-white border border-gray-100 rounded-2xl p-4 mb-10 shadow-sm">
-          <View className="flex-row justify-between items-center mb-3">
-            <Text className="text-brand-dark text-sm font-bold">Recent Orders</Text>
+        {/* Profile and Switch section */}
+        <View className="bg-white px-6 py-4 flex-row justify-between items-center border-b border-gray-100">
+          <View className="flex-row items-center gap-3">
+            {/* Restaurant Avatar */}
+            <Image
+              source={{
+                uri: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=150&auto=format&fit=crop&q=80",
+              }}
+              className="w-16 h-16 rounded-full border border-gray-100"
+            />
+            <View>
+              <View className="flex-row items-center gap-1">
+                <Text className="text-brand-dark text-lg font-bold">Sakura Garden</Text>
+                <Ionicons name="checkmark-circle" size={16} color="#E4792F" />
+              </View>
+              <Text className="text-brand-gray text-xs font-semibold mt-0.5">
+                Restaurant ID : #RG456
+              </Text>
+            </View>
+          </View>
+
+          <View className="flex-row items-center gap-3">
+            {/* Status Toggle Switch */}
+            <TouchableOpacity
+              onPress={() => setIsOnline(!isOnline)}
+              activeOpacity={0.9}
+              className="flex-row items-center bg-gray-50 border border-gray-200 rounded-full p-0.5 w-[110px]"
+            >
+              <View
+                className={`flex-1 py-1 rounded-full items-center justify-center ${
+                  isOnline ? "bg-[#10B981]" : "bg-transparent"
+                }`}
+              >
+                <Text
+                  className={`text-[9px] font-bold ${isOnline ? "text-white" : "text-brand-gray"}`}
+                >
+                  Online
+                </Text>
+              </View>
+              <View
+                className={`flex-1 py-1 rounded-full items-center justify-center ${
+                  !isOnline ? "bg-brand-gray" : "bg-transparent"
+                }`}
+              >
+                <Text
+                  className={`text-[9px] font-bold ${!isOnline ? "text-white" : "text-brand-gray"}`}
+                >
+                  Offline
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            {/* Notification Bell */}
+            <TouchableOpacity className="relative p-1.5 rounded-full bg-gray-50 border border-gray-200">
+              <Ionicons name="notifications-outline" size={20} color="#2E2E2D" />
+              <View className="absolute top-1 right-1 bg-[#E4792F] w-4.5 h-4.5 rounded-full items-center justify-center border border-white">
+                <Text className="text-white text-[8px] font-bold">1</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View className="p-6">
+          {/* Overview Card */}
+          <View className="bg-[#A34E24] rounded-3xl p-5 mb-6 shadow-sm">
+            <Text className="text-white text-base font-bold mb-4">Overview</Text>
+            <View className="flex-row justify-between items-center">
+              {/* Revenue */}
+              <View className="flex-1 items-center">
+                <View className="w-10 h-10 rounded-full bg-white/10 items-center justify-center mb-2">
+                  <Ionicons name="logo-usd" size={18} color="white" />
+                </View>
+                <Text className="text-white/80 text-[10px] font-medium text-center">
+                  Revenue Today
+                </Text>
+                <Text className="text-white text-sm font-bold mt-1 text-center">1,200 USD</Text>
+              </View>
+
+              {/* Divider */}
+              <View className="h-10 w-[1px] bg-white/20" />
+
+              {/* Order */}
+              <View className="flex-1 items-center">
+                <View className="w-10 h-10 rounded-full bg-white/10 items-center justify-center mb-2">
+                  <Ionicons name="bag-handle" size={18} color="white" />
+                </View>
+                <Text className="text-white/80 text-[10px] font-medium text-center">
+                  Order Today
+                </Text>
+                <Text className="text-white text-sm font-bold mt-1 text-center">42</Text>
+              </View>
+
+              {/* Divider */}
+              <View className="h-10 w-[1px] bg-white/20" />
+
+              {/* Rating */}
+              <View className="flex-1 items-center">
+                <View className="w-10 h-10 rounded-full bg-white/10 items-center justify-center mb-2">
+                  <Ionicons name="star" size={18} color="white" />
+                </View>
+                <Text className="text-white/80 text-[10px] font-medium text-center">Rating</Text>
+                <Text className="text-white text-sm font-bold mt-1 text-center">4.8(128)</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Recent Orders Header */}
+          <View className="flex-row justify-between items-center mb-4">
+            <Text className="text-brand-dark text-base font-bold">Recent Order</Text>
             <TouchableOpacity>
-              <Text className="text-brand-orange text-xs font-bold">View All</Text>
+              <Text className="text-[#E4792F] text-xs font-bold">View All</Text>
             </TouchableOpacity>
           </View>
 
-          <View className="gap-3">
-            {recentOrders.map((order) => (
-              <View key={order.id} className="flex-row justify-between items-center py-2.5 border-b border-gray-50 last:border-b-0">
-                <View className="flex-1 mr-3">
-                  <View className="flex-row items-center gap-2 mb-1">
-                    <Text className="text-brand-dark text-sm font-bold">{order.id}</Text>
-                    <Text className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                      order.status === "New" ? "bg-brand-orange/10 text-brand-orange" :
-                      order.status === "Preparing" ? "bg-amber-100 text-amber-700" :
-                      "bg-green-100 text-green-700"
-                    }`}>
-                      {order.status}
-                    </Text>
+          {/* Recent Orders List */}
+          <View className="gap-4">
+            {orders.map((order) => {
+              const statusStyle = getStatusStyle(order.status);
+              return (
+                <View
+                  key={order.id}
+                  className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm relative"
+                >
+                  <View className="flex-row justify-between items-center mb-2">
+                    <View className="flex-row items-center gap-2">
+                      <Text className="text-brand-dark text-base font-bold">
+                        {order.customer}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => setActiveMenuOrderId(order.id)}
+                        className={`${statusStyle.bg} px-3 py-1 rounded-full`}
+                      >
+                        <Text className={`${statusStyle.text} text-[10px] font-bold`}>
+                          {order.status}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+
+                    <TouchableOpacity
+                      onPress={() => setActiveMenuOrderId(order.id)}
+                      className="p-1 rounded-full"
+                    >
+                      <Ionicons name="ellipsis-horizontal" size={18} color="#6A7282" />
+                    </TouchableOpacity>
                   </View>
-                  <Text className="text-brand-gray text-xs" numberOfLines={1}>
-                    {order.items}
-                  </Text>
+
+                  <Text className="text-brand-gray text-xs mb-3">Items: {order.itemsCount}</Text>
+
+                  <View className="flex-row justify-between items-center pt-3 border-t border-gray-50">
+                    <Text className="text-brand-dark text-xs font-bold">
+                      Order {order.orderNum}
+                    </Text>
+                    <View className="flex-row items-center gap-1">
+                      <Ionicons name="time-outline" size={12} color="#6A7282" />
+                      <Text className="text-brand-gray text-[10px]">{order.time}</Text>
+                    </View>
+                  </View>
+
+                  {/* Speech Bubble dropdown status update selector */}
+                  {activeMenuOrderId === order.id && (
+                    <View
+                      style={{
+                        position: "absolute",
+                        top: 40,
+                        right: 15,
+                        zIndex: 10,
+                      }}
+                      className="bg-white border border-gray-200 rounded-2xl shadow-xl p-1 w-32"
+                    >
+                      <TouchableOpacity
+                        onPress={() => updateStatus(order.id, "Preparing")}
+                        className={`px-4 py-2.5 rounded-xl flex-row justify-between items-center ${
+                          order.status === "Preparing" ? "bg-[#FFF8E6]/50" : ""
+                        }`}
+                      >
+                        <Text
+                          className={`text-xs font-bold ${
+                            order.status === "Preparing" ? "text-[#FFB020]" : "text-brand-dark"
+                          }`}
+                        >
+                          Preparing
+                        </Text>
+                        {order.status === "Preparing" && (
+                          <Ionicons name="checkmark" size={14} color="#FFB020" />
+                        )}
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        onPress={() => updateStatus(order.id, "Ready")}
+                        className={`px-4 py-2.5 rounded-xl flex-row justify-between items-center ${
+                          order.status === "Ready" ? "bg-[#FFF0EB]/50" : ""
+                        }`}
+                      >
+                        <Text
+                          className={`text-xs font-bold ${
+                            order.status === "Ready" ? "text-[#FF5C35]" : "text-brand-dark"
+                          }`}
+                        >
+                          Ready
+                        </Text>
+                        {order.status === "Ready" && (
+                          <Ionicons name="checkmark" size={14} color="#FF5C35" />
+                        )}
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        onPress={() => updateStatus(order.id, "Completed")}
+                        className={`px-4 py-2.5 rounded-xl flex-row justify-between items-center ${
+                          order.status === "Completed" ? "bg-[#E6F4EA]/50" : ""
+                        }`}
+                      >
+                        <Text
+                          className={`text-xs font-bold ${
+                            order.status === "Completed" ? "text-[#137333]" : "text-brand-dark"
+                          }`}
+                        >
+                          Completed
+                        </Text>
+                        {order.status === "Completed" && (
+                          <Ionicons name="checkmark" size={14} color="#137333" />
+                        )}
+                      </TouchableOpacity>
+                    </View>
+                  )}
                 </View>
-                <View className="items-end">
-                  <Text className="text-brand-dark text-sm font-bold">{order.price}</Text>
-                  <Text className="text-brand-gray text-[10px] mt-0.5">{order.time}</Text>
-                </View>
-              </View>
-            ))}
+              );
+            })}
           </View>
         </View>
       </ScrollView>
+
+      {/* Dismiss floating dropdowns on press elsewhere */}
+      {activeMenuOrderId !== null && (
+        <Pressable
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 5,
+          }}
+          onPress={() => setActiveMenuOrderId(null)}
+        />
+      )}
     </SafeAreaView>
   );
 }

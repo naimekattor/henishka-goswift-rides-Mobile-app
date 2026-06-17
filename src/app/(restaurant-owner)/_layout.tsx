@@ -31,18 +31,18 @@ export default function RestaurantOwnerLayout() {
       <Tabs.Screen
         name="dashboard/index"
         options={{
-          title: "Dashboard",
+          title: "Home",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? "grid" : "grid-outline"} size={22} color={color} />
+            <Ionicons name={focused ? "home" : "home-outline"} size={22} color={color} />
           ),
         }}
       />
       <Tabs.Screen
         name="orders/index"
         options={{
-          title: "Orders",
+          title: "Order",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? "restaurant" : "restaurant-outline"} size={22} color={color} />
+            <Ionicons name={focused ? "document-text" : "document-text-outline"} size={22} color={color} />
           ),
         }}
       />
@@ -51,16 +51,25 @@ export default function RestaurantOwnerLayout() {
         options={{
           title: "Menu",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? "menu" : "menu-outline"} size={22} color={color} />
+            <Ionicons name={focused ? "restaurant" : "restaurant-outline"} size={22} color={color} />
           ),
         }}
       />
       <Tabs.Screen
         name="earnings/index"
         options={{
-          title: "Earnings",
+          title: "Wallet",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? "cash" : "cash-outline"} size={22} color={color} />
+            <Ionicons name={focused ? "wallet" : "wallet-outline"} size={22} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile/index"
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "person" : "person-outline"} size={22} color={color} />
           ),
         }}
       />
