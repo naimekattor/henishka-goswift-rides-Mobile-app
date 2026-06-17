@@ -2,7 +2,16 @@ import { Button } from "@/components/button";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useRef, useState } from "react";
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function OtpScreen() {
@@ -38,8 +47,8 @@ export default function OtpScreen() {
             char
               ? "bg-brand-orange"
               : isFocused
-              ? "bg-white border-2 border-brand-orange"
-              : "bg-white border border-gray-200"
+                ? "bg-white border-2 border-brand-orange"
+                : "bg-white border border-gray-200"
           }`}
         >
           <Text
@@ -49,12 +58,12 @@ export default function OtpScreen() {
           >
             {char ? "*" : ""}
           </Text>
-        </View>
+        </View>,
       );
     }
     return boxes;
   };
-return (
+  return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
@@ -84,7 +93,8 @@ return (
                   Activation Code
                 </Text>
                 <Text className="text-brand-gray text-base leading-6">
-                  A code has been sent to your Email containing a code to reset your password.
+                  A code has been sent to your Email containing a code to reset
+                  your password.
                 </Text>
               </View>
 
@@ -107,14 +117,21 @@ return (
                 }}
                 keyboardType="number-pad"
                 maxLength={4}
-                style={{ position: "absolute", width: 1, height: 1, opacity: 0 }}
+                style={{
+                  position: "absolute",
+                  width: 1,
+                  height: 1,
+                  opacity: 0,
+                }}
               />
 
               {/* Resend Action */}
               <View className="items-center mt-8">
                 <Text className="text-brand-gray text-sm">
                   if you didn't receive a code!{" "}
-                  <TouchableOpacity onPress={() => console.log("Resend code clicked")}>
+                  <TouchableOpacity
+                    onPress={() => console.log("Resend code clicked")}
+                  >
                     <Text className="text-brand-orange text-sm font-bold underline align-middle">
                       Click Here..
                     </Text>
