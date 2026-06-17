@@ -67,8 +67,12 @@ export default function SignUpScreen() {
       router.push(role.route as any);
     } else if (role.id === "fleet") {
       router.push("/(car-rental)/dashboard" as any);
+    } else if (role.id === "ride") {
+      router.push("/(transport-driver)/dashboard" as any);
+    } else if (role.id === "delivery") {
+      router.push("/(food-rider)/dashboard" as any);
     } else {
-      alert(`${role.title} onboarding is coming soon! Only Restaurant, Retail & Fleet Partners are active in this demo.`);
+      alert(`${role.title} onboarding is coming soon!`);
     }
   };
 
