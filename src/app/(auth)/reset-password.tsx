@@ -18,16 +18,18 @@ export default function ResetPasswordScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-brand-bg">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1"
-      >
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+      className="bg-brand-bg"
+    >
+      <SafeAreaView className="flex-1">
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
-          <View className="flex-1 justify-between px-6 pb-10">
+          <View className="justify-between px-6 pb-10" style={{ flexGrow: 1 }}>
             <View>
               {/* Top Bar with Back Button */}
               <View className="flex-row items-center pt-2 h-14">
@@ -110,7 +112,7 @@ export default function ResetPasswordScreen() {
             </View>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }

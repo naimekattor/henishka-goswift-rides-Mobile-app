@@ -12,6 +12,7 @@ export default function RootLayout() {
       <Stack.Screen name="(retailer)" />
       <Stack.Screen name="(restaurant-owner)" />
       <Stack.Screen name="(food-rider)" />
+      <Stack.Screen name="(customer)" />
     </Stack>
   );
 }

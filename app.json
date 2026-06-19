@@ -48,9 +48,9 @@
         }
       ],
       [
-        "./plugins/withNdkVersion",
+        "expo-location",
         {
-          "ndkVersion": "26.1.10909125"
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
       ]
     ],

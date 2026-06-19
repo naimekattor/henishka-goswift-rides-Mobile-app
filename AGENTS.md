@@ -27,3 +27,6 @@ Always read the exact versioned docs at https://docs.expo.dev/versions/v56.0.0/ 
     - **Image Inputs:** `expo-image-picker`
     - **Storage:** `expo-secure-store`
     - **Icons:** `@expo/vector-icons` and `expo-symbols`
+- **Keyboard Handling for Input Screens:**
+  - Wrapping: All screens with text fields or inputs must wrap key elements in a `KeyboardAvoidingView` configured with `behavior={Platform.OS === "ios" ? "padding" : "padding"}` at the outermost layout level (wrapping the `SafeAreaView`).
+  - Scrolling: Nested inputs should reside inside a `ScrollView` with `contentContainerStyle={{ flexGrow: 1 }}` and an inner `View` wrapping the content to permit clean scrolling when the keyboard becomes active.

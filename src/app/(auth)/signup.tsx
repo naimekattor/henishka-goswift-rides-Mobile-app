@@ -17,8 +17,8 @@ const ROLES: RoleOption[] = [
     id: "customer",
     title: "Customer",
     description: "Order delicious meals, book instant rides, or rent your dream car—all in one place.",
-    icon: "person-outline",
-    route: "/(onboarding)/onboarding", // or appropriate customer page
+    icon: "people-outline",
+    route: "/(auth)/customer-signup",
   },
   {
     id: "restaurant",
@@ -38,14 +38,14 @@ const ROLES: RoleOption[] = [
     id: "ride",
     title: "Ride Partner",
     description: "Drive people to their destinations safely and boost your daily earnings as a professional driver.",
-    icon: "car-outline",
+    icon: "car-sport-outline",
     route: "/(onboarding)/ride-onboarding",
   },
   {
     id: "fleet",
     title: "Fleet Partner",
     description: "List your vehicles, manage bookings, and grow your rental business with ease.",
-    icon: "key-outline",
+    icon: "car-outline",
     route: "/(onboarding)/fleet-onboarding",
   },
   {
@@ -59,11 +59,11 @@ const ROLES: RoleOption[] = [
 
 export default function SignUpScreen() {
   const router = useRouter();
-  const [selectedRole, setSelectedRole] = useState<string>("restaurant"); // Default highlighted role matching mock
+  const [selectedRole, setSelectedRole] = useState<string>("customer"); // Default to Customer matching the first active role in mockup
 
   const handleRoleSelect = (role: RoleOption) => {
     setSelectedRole(role.id);
-    if (role.id === "restaurant" || role.id === "retail") {
+    if (role.id === "restaurant" || role.id === "customer") {
       router.push(role.route as any);
     } else if (role.id === "fleet") {
       router.push("/(car-rental)/dashboard" as any);
@@ -72,7 +72,7 @@ export default function SignUpScreen() {
     } else if (role.id === "delivery") {
       router.push("/(food-rider)/dashboard" as any);
     } else {
-      alert(`${role.title} onboarding is coming soon!`);
+      alert(`${role.title} onboarding is coming soon! Only Customer and Restaurant Partner are active in this demo.`);
     }
   };
 
@@ -91,72 +91,73 @@ export default function SignUpScreen() {
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
-        className="px-6"
       >
-        {/* Logo Container */}
-        <View className="items-center justify-center pt-2 pb-6">
-          <Image
-            source={require("@/assets/logo.png")}
-            className="w-44 h-22"
-            resizeMode="contain"
-          />
-        </View>
+        <View className="px-6 flex-1">
+          {/* Logo Container */}
+          <View className="items-center justify-center pt-2 pb-6">
+            <Image
+              source={require("@/assets/logo.png")}
+              className="w-44 h-22"
+              resizeMode="contain"
+            />
+          </View>
 
-        {/* Header Text */}
-        <View className="items-center mb-8 px-4">
-          <Text className="text-brand-dark text-xl font-bold text-center leading-7">
-            Choose How You Want to{"\n"}Use <Text className="text-brand-orange">Goswift Rides</Text>
-          </Text>
-        </View>
+          {/* Header Text */}
+          <View className="items-center mb-8 px-4">
+            <Text className="text-brand-dark text-xl font-bold text-center leading-7">
+              Choose How You Want to{"\n"}Use <Text className="text-brand-orange">Goswift Rides</Text>
+            </Text>
+          </View>
 
-        {/* Roles List */}
-        <View className="gap-4 pb-12">
-          {ROLES.map((role) => {
-            const isSelected = selectedRole === role.id;
-            return (
-              <TouchableOpacity
-                key={role.id}
-                onPress={() => handleRoleSelect(role)}
-                activeOpacity={0.9}
-                className={`flex-row p-5 rounded-2xl border ${
-                  isSelected
-                    ? "bg-brand-orange border-transparent shadow-md shadow-brand-orange/30"
-                    : "bg-white border-gray-200"
-                }`}
-              >
-                {/* Left Icon */}
-                <View
-                  className={`w-12 h-12 rounded-2xl items-center justify-center mr-4 ${
-                    isSelected ? "bg-white/20" : "bg-brand-orange/10"
+          {/* Roles List */}
+          <View className="gap-4 pb-12">
+            {ROLES.map((role) => {
+              const isSelected = selectedRole === role.id;
+              return (
+                <TouchableOpacity
+                  key={role.id}
+                  onPress={() => handleRoleSelect(role)}
+                  activeOpacity={0.9}
+                  className={`p-6 rounded-2xl border ${
+                    isSelected
+                      ? "bg-brand-orange border-transparent"
+                      : "bg-white border-gray-200"
                   }`}
+                  style={isSelected ? {
+                    shadowColor: '#E4792F',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 6,
+                    elevation: 3
+                  } : undefined}
                 >
-                  <Ionicons
-                    name={role.icon}
-                    size={24}
-                    color={isSelected ? "white" : "#E4792F"}
-                  />
-                </View>
+                  {/* Top Row: Icon + Title */}
+                  <View className="flex-row items-center gap-3 mb-2">
+                    <Ionicons
+                      name={role.icon}
+                      size={24}
+                      color={isSelected ? "white" : "#E4792F"}
+                    />
+                    <Text
+                      className={`text-lg font-bold ${
+                        isSelected ? "text-white" : "text-brand-dark"
+                      }`}
+                    >
+                      {role.title}
+                    </Text>
+                  </View>
 
-                {/* Content */}
-                <View className="flex-1 justify-center">
+                  {/* Description */}
                   <Text
-                    className={`text-base font-bold mb-1 ${
-                      isSelected ? "text-white" : "text-brand-dark"
-                    }`}
-                  >
-                    {role.title}
-                  </Text>
-                  <Text
-                    className={`text-xs leading-4 ${
-                      isSelected ? "text-white/80" : "text-brand-gray"
-                    }`}
+                    className="text-sm leading-5"
+                    style={isSelected ? { color: 'rgba(255, 255, 255, 0.9)' } : { color: '#6A7282' }}
                   >
                     {role.description}
                   </Text>
-                </View>
-              </TouchableOpacity>
-            );
-          })}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>

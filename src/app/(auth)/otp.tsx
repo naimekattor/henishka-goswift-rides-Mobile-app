@@ -1,18 +1,32 @@
-import { useState, useRef } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Pressable } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
 import { Button } from "@/components/button";
+import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRef, useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function OtpScreen() {
   const [code, setCode] = useState("");
   const inputRef = useRef<TextInput>(null);
   const router = useRouter();
+  const { flow } = useLocalSearchParams();
 
   const handleContinue = () => {
     console.log("OTP code submitted:", code);
-    router.push("/(auth)/reset-password");
+    if (flow === "customer-signup") {
+      router.replace("/(customer)" as any);
+    } else {
+      router.push("/(auth)/reset-password");
+    }
   };
 
   const handleBoxPress = () => {
@@ -33,8 +47,8 @@ export default function OtpScreen() {
             char
               ? "bg-brand-orange"
               : isFocused
-              ? "bg-white border-2 border-brand-orange"
-              : "bg-white border border-gray-200"
+                ? "bg-white border-2 border-brand-orange"
+                : "bg-white border border-gray-200"
           }`}
         >
           <Text
@@ -44,23 +58,24 @@ export default function OtpScreen() {
           >
             {char ? "*" : ""}
           </Text>
-        </View>
+        </View>,
       );
     }
     return boxes;
   };
-
   return (
-    <SafeAreaView className="flex-1 bg-brand-bg">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1"
-      >
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+      className="bg-brand-bg"
+    >
+      <SafeAreaView className="flex-1">
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
-          <View className="flex-1 justify-between px-6 pb-10">
+          <View className="justify-between px-6 pb-10" style={{ flexGrow: 1 }}>
             <View>
               {/* Top Bar with Back Button */}
               <View className="flex-row items-center pt-2 h-14">
@@ -78,7 +93,8 @@ export default function OtpScreen() {
                   Activation Code
                 </Text>
                 <Text className="text-brand-gray text-base leading-6">
-                  A code has been sent to your Email containing a code to reset your password.
+                  A code has been sent to your Email containing a code to reset
+                  your password.
                 </Text>
               </View>
 
@@ -101,14 +117,21 @@ export default function OtpScreen() {
                 }}
                 keyboardType="number-pad"
                 maxLength={4}
-                style={{ position: "absolute", width: 1, height: 1, opacity: 0 }}
+                style={{
+                  position: "absolute",
+                  width: 1,
+                  height: 1,
+                  opacity: 0,
+                }}
               />
 
               {/* Resend Action */}
               <View className="items-center mt-8">
                 <Text className="text-brand-gray text-sm">
                   if you didn't receive a code!{" "}
-                  <TouchableOpacity onPress={() => console.log("Resend code clicked")}>
+                  <TouchableOpacity
+                    onPress={() => console.log("Resend code clicked")}
+                  >
                     <Text className="text-brand-orange text-sm font-bold underline align-middle">
                       Click Here..
                     </Text>
@@ -123,7 +146,7 @@ export default function OtpScreen() {
             </View>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
